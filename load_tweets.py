@@ -115,13 +115,44 @@ def insert_tweet(connection,tweet):
         # create/update the user
         sql = sqlalchemy.sql.text('''
             INSERT INTO users
-                (id_users, created_at, updated_at, id_urls, friends_count, listed_count, favourites_count, statuses_count, protected, verified, screen_name, name, location, description, withheld_in_countries)
+                (id_users,
+                screen_name,
+                name,
+                location,
+                created_at, 
+                updated_at, 
+                id_urls, 
+                friends_count, 
+                listed_count, 
+                favourites_count, 
+                statuses_count, 
+                protected, 
+                verified,  
+                description, 
+                withheld_in_countries)
             VALUES
-                (:id_users, :created_at, :updated_at, :id_urls, :friends_count, :listed_count, :favourites_count, :statuses_count, :protected, :verified, :screen_name, :name, :location, :description, :withheld_in_countries)
-            ON CONFLICT (id_users) DO NOTHING
+                (:id_users,
+                :screen_name,
+                :name,
+                :location,
+                :created_at, 
+                :updated_at, 
+                :id_urls, 
+                :friends_count, 
+                :listed_count, 
+                :favourites_count, 
+                :statuses_count, 
+                :protected, 
+                :verified, 
+                :description, 
+                :withheld_in_countries)
+                ON CONFLICT (id_users) DO NOTHING
                 ''')
         res = connection.execute(sql, { 
                 'id_users': tweet['user']['id'],
+                'screen_name':remove_nulls(tweet['user']['screen_name']),
+                'name': remove_nulls(tweet['user']['name']),
+                'location': remove_nulls(tweet['user']['location']),
                 'created_at': tweet['user']['created_at'],
                 'updated_at': tweet['created_at'],
                 'id_urls':user_id_urls,
@@ -131,9 +162,6 @@ def insert_tweet(connection,tweet):
                 'statuses_count': tweet['user']['statuses_count'],
                 'protected': tweet['user']['protected'],
                 'verified': tweet['user']['verified'],
-                'screen_name':remove_nulls(tweet['user']['screen_name']),
-                'name': remove_nulls(tweet['user']['name']),
-                'location': remove_nulls(tweet['user']['location']),
                 'description': remove_nulls(tweet['user']['description']),
                 'withheld_in_countries':tweet['user'].get('withheld_in_countries', None),
                 })
@@ -206,9 +234,43 @@ def insert_tweet(connection,tweet):
         # insert the tweet
         sql=sqlalchemy.sql.text(f'''
             insert into tweets
-                (id_tweets, id_users, created_at, in_reply_to_status_id, in_reply_to_user_id, quoted_status_id, retweet_count, favorite_count, quote_count, withheld_copyright, withheld_in_countries, source, text, country_code, state_code, lang, place_name, geo)
+                (id_tweets, 
+                id_users, 
+                created_at, 
+                in_reply_to_status_id, 
+                in_reply_to_user_id, 
+                quoted_status_id,
+                retweet_count, 
+                favorite_count, 
+                quote_count, 
+                withheld_copyright, 
+                withheld_in_countries, 
+                source, 
+                text, 
+                country_code, 
+                state_code, 
+                lang, 
+                place_name, 
+                geo)
             values
-                (:id_tweets, :id_users, :created_at, :in_reply_to_status_id, :in_reply_to_user_id, :quoted_status_id, :retweet_count, :favorite_count, :quote_count, :withheld_copyright, :withheld_in_countries, :source, :text, :country_code, :state_code, :lang, :place_name, :geo)
+                (:id_tweets, 
+                :id_users, 
+                :created_at, 
+                :in_reply_to_status_id, 
+                :in_reply_to_user_id, 
+                :quoted_status_id, 
+                :retweet_count, 
+                :favorite_count, 
+                :quote_count, 
+                :withheld_copyright, 
+                :withheld_in_countries, 
+                :source, 
+                :text, 
+                :country_code, 
+                :state_code, 
+                :lang, 
+                :place_name, 
+                :geo)
             on conflict do nothing
             ''')
         res=connection.execute(sql, {
